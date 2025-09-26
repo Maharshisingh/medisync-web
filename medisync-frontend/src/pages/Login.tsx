@@ -1,0 +1,102 @@
+// src/pages/Login.tsx
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { Eye, EyeOff, Mail, Lock, Stethoscope } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/context/AuthContext"; // <-- NEW: Import our custom hook
+
+const Login = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const { login } = useAuth(); // <-- NEW: Get the login function from our context
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch('/api/auth/login/user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.msg || 'Login failed.');
+      }
+
+      // --- THIS IS THE KEY CHANGE ---
+      // Use the login function from our context.
+      // This will save the token to localStorage AND update the global state.
+      login(result.token);
+
+      toast({
+        title: "Login Successful",
+        description: "Welcome back to MediSync!",
+      });
+
+      setTimeout(() => navigate('/'), 1000); // Redirect to homepage after login
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // No changes needed for the JSX part (the return statement)
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main className="container py-12">
+        <div className="mx-auto max-w-md">
+          <Card className="card-elevated">
+            <CardHeader className="text-center">
+              <div className="flex justify-center mb-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary">
+                  <Stethoscope className="h-6 w-6 text-primary-foreground" />
+                </div>
+              </div>
+              <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
+              <CardDescription>Sign in to your MediSync account</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email Address</Label>
+                  <div className="relative"><Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" /><Input id="email" type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} className="pl-9" required /></div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <div className="relative"><Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" /><Input id="password" type={showPassword ? "text" : "password"} placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)} className="pl-9 pr-9" required /><button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground">{showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button></div>
+                </div>
+                {error && <p className="text-sm text-destructive">{error}</p>}
+                <Button type="submit" className="w-full" disabled={isLoading}>{isLoading ? "Signing in..." : "Sign In"}</Button>
+              </form>
+              {/* ... other form elements remain the same */}
+            </CardContent>
+            <CardFooter className="justify-center">
+              <p className="text-sm text-muted-foreground">Don't have an account? <Link to="/register" className="text-primary hover:text-primary-hover font-medium">Sign up here</Link></p>
+            </CardFooter>
+          </Card>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+};
+export default Login;
