@@ -110,9 +110,161 @@ export const getMyInventory = async (req: AuthRequest, res: Response) => {
         }
 
         const inventory = await Inventory.find({ pharmacy: req.pharmacy.id })
-            .populate('medicine', 'name manufacturer'); // Also get medicine details
+            .populate('medicine', 'name manufacturer');
 
         res.json(inventory);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: 'Server Error' });
+    }
+};
+
+export const addMedicineToInventory = async (req: AuthRequest, res: Response) => {
+    try {
+        if (!req.pharmacy || !req.pharmacy.id) {
+            return res.status(401).json({ msg: 'Not authorized, not a valid pharmacy token.' });
+        }
+
+        const { name, manufacturer, price, quantity } = req.body;
+        
+        if (!name || price == null || quantity == null) {
+            return res.status(400).json({ msg: 'Name, price, and quantity are required.' });
+        }
+
+        const pharmacyId = req.pharmacy.id;
+
+        // Find or create the medicine
+        let medicine = await Medicine.findOne({ name });
+        if (!medicine) {
+            medicine = await Medicine.create({
+                name,
+                manufacturer: manufacturer || 'N/A',
+            });
+        }
+
+        // Add or update inventory
+        const inventoryItem = await Inventory.findOneAndUpdate(
+            { pharmacy: pharmacyId, medicine: medicine._id },
+            {
+                price: Number(price),
+                quantity: Number(quantity),
+                inStock: Number(quantity) > 0,
+            },
+            { upsert: true, new: true }
+        ).populate('medicine', 'name manufacturer');
+
+        res.status(201).json({ msg: 'Medicine added successfully', inventoryItem });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: 'Server Error' });
+    }
+};
+
+export const getPharmacyProfile = async (req: AuthRequest, res: Response) => {
+    try {
+        if (!req.pharmacy || !req.pharmacy.id) {
+            return res.status(401).json({ msg: 'Not authorized, not a valid pharmacy token.' });
+        }
+
+        const pharmacy = await Pharmacy.findById(req.pharmacy.id).select('-password');
+        
+        if (!pharmacy) {
+            return res.status(404).json({ msg: 'Pharmacy not found' });
+        }
+
+        res.json(pharmacy);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: 'Server Error' });
+    }
+};
+
+export const updateInventoryItem = async (req: AuthRequest, res: Response) => {
+    try {
+        if (!req.pharmacy || !req.pharmacy.id) {
+            return res.status(401).json({ msg: 'Not authorized, not a valid pharmacy token.' });
+        }
+
+        const { price, quantity } = req.body;
+        const inventoryId = req.params.id;
+        
+        if (price == null || quantity == null) {
+            return res.status(400).json({ msg: 'Price and quantity are required.' });
+        }
+
+        const inventoryItem = await Inventory.findOneAndUpdate(
+            { _id: inventoryId, pharmacy: req.pharmacy.id },
+            {
+                price: Number(price),
+                quantity: Number(quantity),
+                inStock: Number(quantity) > 0,
+            },
+            { new: true }
+        ).populate('medicine', 'name manufacturer');
+
+        if (!inventoryItem) {
+            return res.status(404).json({ msg: 'Inventory item not found' });
+        }
+
+        res.json({ msg: 'Inventory item updated successfully', inventoryItem });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: 'Server Error' });
+    }
+};
+
+export const deleteInventoryItem = async (req: AuthRequest, res: Response) => {
+    try {
+        if (!req.pharmacy || !req.pharmacy.id) {
+            return res.status(401).json({ msg: 'Not authorized, not a valid pharmacy token.' });
+        }
+
+        const inventoryId = req.params.id;
+
+        const inventoryItem = await Inventory.findOneAndDelete({
+            _id: inventoryId,
+            pharmacy: req.pharmacy.id
+        });
+
+        if (!inventoryItem) {
+            return res.status(404).json({ msg: 'Inventory item not found' });
+        }
+
+        res.json({ msg: 'Inventory item deleted successfully' });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: 'Server Error' });
+    }
+};
+
+export const updatePharmacyProfile = async (req: AuthRequest, res: Response) => {
+    try {
+        if (!req.pharmacy || !req.pharmacy.id) {
+            return res.status(401).json({ msg: 'Not authorized, not a valid pharmacy token.' });
+        }
+
+        const { pharmacyName, contactNumber, address } = req.body;
+        
+        const updatedPharmacy = await Pharmacy.findByIdAndUpdate(
+            req.pharmacy.id,
+            {
+                pharmacyName,
+                contactNumber,
+                address
+            },
+            { new: true }
+        ).select('-password');
+
+        if (!updatedPharmacy) {
+            return res.status(404).json({ msg: 'Pharmacy not found' });
+        }
+
+        res.json({ msg: 'Profile updated successfully', pharmacy: updatedPharmacy });
 
     } catch (error) {
         console.error(error);

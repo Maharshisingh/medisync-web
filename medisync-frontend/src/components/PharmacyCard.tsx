@@ -17,11 +17,27 @@ interface PharmacyCardProps {
     price: number;
     originalPrice?: number;
     lastUpdated: string;
+    location?: [number, number];
   };
   medicineName: string;
 }
 
 const PharmacyCard = ({ pharmacy, medicineName }: PharmacyCardProps) => {
+  const handleCall = () => {
+    window.open(`tel:${pharmacy.phone}`, '_self');
+  };
+
+  const handleDirections = () => {
+    if (pharmacy.location) {
+      const [lng, lat] = pharmacy.location;
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+      window.open(url, '_blank');
+    } else {
+      const encodedAddress = encodeURIComponent(pharmacy.address);
+      const url = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+      window.open(url, '_blank');
+    }
+  };
   const getAvailabilityColor = (availability: string) => {
     switch (availability) {
       case "available":
@@ -49,7 +65,7 @@ const PharmacyCard = ({ pharmacy, medicineName }: PharmacyCardProps) => {
   };
 
   return (
-    <div className="card-medical hover:card-hover transition-all duration-200 p-6">
+    <div className="card-medical hover:card-hover transition-all duration-200 p-4 sm:p-6">
       <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
         {/* Pharmacy Info */}
         <div className="flex-1">
@@ -58,10 +74,12 @@ const PharmacyCard = ({ pharmacy, medicineName }: PharmacyCardProps) => {
               <h3 className="text-lg font-semibold text-foreground mb-1">
                 {pharmacy.name}
               </h3>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                <MapPin className="h-4 w-4" />
-                <span>{pharmacy.address}</span>
-                <Badge variant="outline" className="text-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-sm text-muted-foreground mb-2">
+                <div className="flex items-center gap-1">
+                  <MapPin className="h-4 w-4 flex-shrink-0" />
+                  <span className="break-words">{pharmacy.address}</span>
+                </div>
+                <Badge variant="outline" className="text-xs w-fit">
                   {pharmacy.distance}
                 </Badge>
               </div>
@@ -75,13 +93,13 @@ const PharmacyCard = ({ pharmacy, medicineName }: PharmacyCardProps) => {
             </div>
           </div>
 
-          <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-muted-foreground mb-4">
             <div className="flex items-center gap-1">
-              <Phone className="h-4 w-4" />
+              <Phone className="h-4 w-4 flex-shrink-0" />
               <span>{pharmacy.phone}</span>
             </div>
             <div className="flex items-center gap-1">
-              <Clock className="h-4 w-4" />
+              <Clock className="h-4 w-4 flex-shrink-0" />
               {pharmacy.isOpen ? (
                 <span className="text-success">
                   Open {pharmacy.openUntil && `until ${pharmacy.openUntil}`}
@@ -100,7 +118,7 @@ const PharmacyCard = ({ pharmacy, medicineName }: PharmacyCardProps) => {
               {getAvailabilityText(pharmacy.availability)}
             </Badge>
             <div className="flex lg:justify-end items-baseline gap-2">
-              <span className="text-2xl font-bold text-primary">
+              <span className="text-xl sm:text-2xl font-bold text-primary">
                 ₹{pharmacy.price}
               </span>
               {pharmacy.originalPrice && pharmacy.originalPrice > pharmacy.price && (
@@ -120,11 +138,17 @@ const PharmacyCard = ({ pharmacy, medicineName }: PharmacyCardProps) => {
               size="sm"
               className="flex-1"
               disabled={pharmacy.availability === "out-of-stock"}
+              onClick={handleCall}
             >
               <Phone className="h-4 w-4 mr-2" />
               Call Store
             </Button>
-            <Button variant="outline" size="sm" className="flex-1">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="flex-1"
+              onClick={handleDirections}
+            >
               <Navigation className="h-4 w-4 mr-2" />
               Directions
             </Button>

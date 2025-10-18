@@ -14,33 +14,33 @@ import PharmacyLogin from "./pages/PharmacyLogin";
 import { AuthProvider } from "./context/AuthContext";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminRoute from "./components/auth/AdminRoute";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <AuthProvider> {/* AuthProvider should wrap your router */}
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/search" element={<SearchResults />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/partner-dashboard" element={<PartnerDashboard />} />
-            <Route path="/partner-login" element={<PharmacyLogin />} />
-            <Route path="/partner-dashboard" element={<PartnerDashboard />} />
-            <Route path="/partner-login" element={<PharmacyLogin />} />
-            <Route path="/admin" element={<AdminDashboard />} /> 
-            {/* Catch-all "*" route must be last */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </AuthProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <AuthProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/search" element={<SearchResults />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/partner-dashboard" element={<PartnerDashboard />} />
+              <Route path="/partner-login" element={<PharmacyLogin />} />
+              <Route path="/admin" element={<AdminDashboard />} /> 
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </AuthProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;

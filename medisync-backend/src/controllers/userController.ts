@@ -12,12 +12,19 @@ import { AuthRequest } from '../middleware/authMiddleware';
 export const searchMedicine = async (req: Request, res: Response) => {
   try {
     const { name, lat, lng } = req.query as { name: string; lat: string; lng: string };
-    const maxDistance = 10000; // 10km
+    
+    if (!name) {
+      return res.status(400).json({ msg: 'Medicine name is required' });
+    }
+
+    const latitude = lat ? parseFloat(lat) : 19.0760;
+    const longitude = lng ? parseFloat(lng) : 72.8777;
+    const maxDistance = 50000;
 
     const results = await Pharmacy.aggregate([
       {
         $geoNear: {
-          near: { type: 'Point', coordinates: [parseFloat(lng), parseFloat(lat)] },
+          near: { type: 'Point', coordinates: [longitude, latitude] },
           distanceField: 'distance',
           maxDistance: maxDistance,
           query: { isApproved: true },
@@ -30,8 +37,7 @@ export const searchMedicine = async (req: Request, res: Response) => {
       { $unwind: '$medicineDetails' },
       {
         $match: {
-          'medicineDetails.name': { $regex: name, $options: 'i' },
-          'inventory.inStock': true
+          'medicineDetails.name': { $regex: name, $options: 'i' }
         }
       },
       {
@@ -45,7 +51,10 @@ export const searchMedicine = async (req: Request, res: Response) => {
                 id: '$_id',
                 name: '$pharmacyName',
                 address: '$address',
-                location: '$location.coordinates'
+                location: '$location.coordinates',
+                rating: '$rating',
+                numReviews: '$numReviews',
+                contactNumber: '$contactNumber'
             }
         }
       },
@@ -54,8 +63,8 @@ export const searchMedicine = async (req: Request, res: Response) => {
 
     res.json(results);
   } catch (err) {
-    console.error((err as Error).message);
-    res.status(500).send('Server Error');
+    console.error('Search error:', err);
+    res.status(500).json({ msg: 'Server Error' });
   }
 };
 
@@ -99,4 +108,25 @@ export const uploadPrescription = async (req: AuthRequest, res: Response) => {
         console.error(error);
         res.status(500).json({ msg: 'Server Error' });
     }
+};
+
+export const getMedicineSuggestions = async (req: Request, res: Response) => {
+  try {
+    const { q } = req.query as { q: string };
+    
+    if (!q || q.length < 2) {
+      return res.json([]);
+    }
+
+    const suggestions = await Medicine.find({
+      name: { $regex: q, $options: 'i' }
+    })
+    .select('name manufacturer')
+    .limit(10);
+
+    res.json(suggestions);
+  } catch (err) {
+    console.error((err as Error).message);
+    res.status(500).send('Server Error');
+  }
 };

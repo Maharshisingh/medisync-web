@@ -8,12 +8,12 @@ const Footer = () => {
         <div className="grid md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="space-y-4">
-            <Link to="/" className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
                 <Stethoscope className="h-5 w-5 text-primary-foreground" />
               </div>
               <span className="text-xl font-bold text-medical-blue">MediSync</span>
-            </Link>
+            </div>
             <p className="text-sm text-muted-foreground max-w-xs">
               Connecting you with local pharmacies for better healthcare access and competitive pricing.
             </p>
@@ -40,19 +40,19 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/pharmacies" className="text-muted-foreground hover:text-primary transition-colors">
+                <span className="text-muted-foreground">
                   Browse Pharmacies
-                </Link>
+                </span>
               </li>
               <li>
-                <Link to="/about" className="text-muted-foreground hover:text-primary transition-colors">
+                <span className="text-muted-foreground">
                   How it Works
-                </Link>
+                </span>
               </li>
               <li>
-                <Link to="/faq" className="text-muted-foreground hover:text-primary transition-colors">
+                <span className="text-muted-foreground">
                   FAQ
-                </Link>
+                </span>
               </li>
             </ul>
           </div>
@@ -62,9 +62,9 @@ const Footer = () => {
             <h3 className="font-semibold text-foreground">For Partners</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link to="/partner-register" className="text-muted-foreground hover:text-primary transition-colors">
+                <span className="text-muted-foreground">
                   Join as Pharmacy
-                </Link>
+                </span>
               </li>
               <li>
                 <Link to="/partner-login" className="text-muted-foreground hover:text-primary transition-colors">
@@ -72,14 +72,14 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/partner-benefits" className="text-muted-foreground hover:text-primary transition-colors">
+                <span className="text-muted-foreground">
                   Benefits
-                </Link>
+                </span>
               </li>
               <li>
-                <Link to="/support" className="text-muted-foreground hover:text-primary transition-colors">
+                <span className="text-muted-foreground">
                   Support
-                </Link>
+                </span>
               </li>
             </ul>
           </div>
@@ -109,15 +109,15 @@ const Footer = () => {
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
           <p>&copy; 2024 MediSync. All rights reserved.</p>
           <div className="flex space-x-6">
-            <Link to="/privacy" className="hover:text-primary transition-colors">
+            <span className="text-muted-foreground">
               Privacy Policy
-            </Link>
-            <Link to="/terms" className="hover:text-primary transition-colors">
+            </span>
+            <span className="text-muted-foreground">
               Terms of Service
-            </Link>
-            <Link to="/cookies" className="hover:text-primary transition-colors">
+            </span>
+            <span className="text-muted-foreground">
               Cookie Policy
-            </Link>
+            </span>
           </div>
         </div>
       </div>

@@ -3,14 +3,15 @@ import express from 'express';
 const router = express.Router();
 
 // Import controllers
-import { searchMedicine, getUserProfile, uploadPrescription } from '../controllers/userController';
+import { searchMedicine, getUserProfile, uploadPrescription, getMedicineSuggestions } from '../controllers/userController';
 
 // Import middleware
 import { protect } from '../middleware/authMiddleware';
 import upload from '../middleware/uploadMiddleware'; // <-- Import the new upload middleware
 
-// Public route
+// Public routes
 router.get('/search', searchMedicine);
+router.get('/suggestions', getMedicineSuggestions);
 
 // Protected User routes
 router.get('/profile', protect, getUserProfile);

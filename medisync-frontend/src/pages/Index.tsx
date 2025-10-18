@@ -187,10 +187,8 @@ const Index = () => {
                   Search Medicines
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild>
-                <Link to="/about">
-                  Learn More
-                </Link>
+              <Button size="lg" variant="outline" disabled>
+                Learn More
               </Button>
             </div>
           </div>

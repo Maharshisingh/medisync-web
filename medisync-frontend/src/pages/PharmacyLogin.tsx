@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Mail, Lock, Shield } from "lucide-react";
+import { Mail, Lock, Shield, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const PharmacyLogin = () => {
@@ -15,6 +15,7 @@ const PharmacyLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -61,13 +62,13 @@ const PharmacyLogin = () => {
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2"><Label htmlFor="email">Email Address</Label><div className="relative"><Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" /><Input id="email" type="email" placeholder="Enter your pharmacy email" value={email} onChange={(e) => setEmail(e.target.value)} className="pl-9" required /></div></div>
-                <div className="space-y-2"><Label htmlFor="password">Password</Label><div className="relative"><Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" /><Input id="password" type="password" placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)} className="pl-9" required /></div></div>
+                <div className="space-y-2"><Label htmlFor="password">Password</Label><div className="relative"><Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" /><Input id="password" type={showPassword ? "text" : "password"} placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)} className="pl-9 pr-9" required /><button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">{showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button></div></div>
                 {error && <p className="text-sm text-destructive">{error}</p>}
                 <Button type="submit" className="w-full" variant="trust" disabled={isLoading}>{isLoading ? "Signing in..." : "Sign In"}</Button>
               </form>
             </CardContent>
             <CardFooter className="justify-center">
-              <p className="text-sm text-muted-foreground">Not a partner yet? <Link to="/partner-register" className="text-primary hover:text-primary-hover font-medium">Join Here</Link></p>
+              <p className="text-sm text-muted-foreground">Not a partner yet? <span className="text-muted-foreground">Join Here</span></p>
             </CardFooter>
           </Card>
         </div>

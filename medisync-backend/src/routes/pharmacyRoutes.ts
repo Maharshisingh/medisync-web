@@ -6,7 +6,12 @@ import {
     uploadInventory, 
     createPharmacyReview,
     getPharmacyReviews,
-    getMyInventory 
+    getMyInventory,
+    addMedicineToInventory,
+    getPharmacyProfile,
+    updateInventoryItem,
+    deleteInventoryItem,
+    updatePharmacyProfile
 } from '../controllers/pharmacyController';
 
 const router = express.Router();
@@ -27,4 +32,10 @@ router.post('/:id/reviews', protect, createPharmacyReview);
 router.get('/:id/reviews', getPharmacyReviews); 
 
 router.get('/inventory/me', protect, getMyInventory);
+router.post('/inventory/add', protect, addMedicineToInventory);
+router.put('/inventory/update/:id', protect, updateInventoryItem);
+router.delete('/inventory/delete/:id', protect, deleteInventoryItem);
+router.get('/profile', protect, getPharmacyProfile);
+router.put('/profile/update', protect, updatePharmacyProfile);
+
 export default router;

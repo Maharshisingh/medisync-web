@@ -1,0 +1,15 @@
+{
+  "name": "Test Marathi User",
+  "email": "trymarathi@gmail.com",
+  "password": "password@123"
+}
+{
+  "name": "Admin User",
+  "email": "admin@medisync.com",
+  "password": "adminpassword123"
+}
+{
+  "email": "wellness.pune@example.com",
+  "password": "pharma123"
+}
+https://github.com/Maharshisingh/medisync

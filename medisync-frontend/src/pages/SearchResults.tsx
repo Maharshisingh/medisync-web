@@ -1,5 +1,5 @@
 // src/pages/SearchResults.tsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -34,11 +34,14 @@ const SearchResults = () => {
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
   const [sortBy, setSortBy] = useState("distance");
   const [filterBy, setFilterBy] = useState("all");
+  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const medicineName = searchParams.get("q") || "";
 
-  // Fixed user location (later replace with geolocation)
-  const userLocation = { lat: 18.52, lng: 73.85 };
+  // Default location (Mumbai coordinates)
+  const userLocation = { lat: 19.0760, lng: 72.8777 };
 
   // Fetch data with react-query
   const {
@@ -50,7 +53,8 @@ const SearchResults = () => {
     queryKey: ["medicineSearch", medicineName],
     queryFn: () =>
       fetchMedicineSearch(medicineName, userLocation.lat, userLocation.lng),
-    enabled: !!medicineName,
+    enabled: !!medicineName && medicineName.length > 0,
+    retry: 1,
   });
 
   // Derived state: filtering + sorting
@@ -94,7 +98,35 @@ const SearchResults = () => {
     e.preventDefault();
     if (searchQuery.trim()) {
       setSearchParams({ q: searchQuery.trim() });
+      setShowSuggestions(false);
     }
+  };
+
+  const fetchSuggestions = async (query: string) => {
+    if (query.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+    try {
+      const response = await fetch(`/api/users/suggestions?q=${encodeURIComponent(query)}`);
+      const data = await response.json();
+      setSuggestions(data);
+    } catch (error) {
+      setSuggestions([]);
+    }
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchSuggestions(searchQuery);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const handleSuggestionClick = (medicineName: string) => {
+    setSearchQuery(medicineName);
+    setShowSuggestions(false);
+    setSearchParams({ q: medicineName });
   };
 
   const availableCount = displayResults.filter((r) => r.quantity > 0).length;
@@ -129,18 +161,35 @@ const SearchResults = () => {
           )}
 
           {/* New Search */}
-          <form onSubmit={handleSearch} className="flex gap-3 max-w-2xl">
+          <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3 max-w-2xl">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
+                ref={inputRef}
                 type="text"
                 placeholder="Search for another medicine..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setShowSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                 className="pl-9"
               />
+              {showSuggestions && suggestions.length > 0 && (
+                <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-md shadow-lg z-10 max-h-60 overflow-y-auto">
+                  {suggestions.map((medicine, index) => (
+                    <div
+                      key={index}
+                      className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
+                      onClick={() => handleSuggestionClick(medicine.name)}
+                    >
+                      <div className="font-medium text-gray-900">{medicine.name}</div>
+                      <div className="text-sm text-gray-500">{medicine.manufacturer}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-            <Button type="submit">Search</Button>
+            <Button type="submit" className="w-full sm:w-auto">Search</Button>
           </form>
         </div>
 
@@ -165,11 +214,13 @@ const SearchResults = () => {
         {/* Filters + Sorting */}
         {!isLoading && !isError && results && results.length > 0 && (
           <div className="flex flex-col sm:flex-row gap-4 mb-6 p-4 bg-surface-muted rounded-lg">
-            <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium">Filters:</span>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium">Filters:</span>
+              </div>
               <Select value={filterBy} onValueChange={setFilterBy}>
-                <SelectTrigger className="w-32">
+                <SelectTrigger className="w-full sm:w-32">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -180,11 +231,13 @@ const SearchResults = () => {
               </Select>
             </div>
 
-            <div className="flex items-center gap-2">
-              <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium">Sort by:</span>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <div className="flex items-center gap-2">
+                <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium">Sort by:</span>
+              </div>
               <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-36">
+                <SelectTrigger className="w-full sm:w-36">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -211,7 +264,7 @@ const SearchResults = () => {
                     name: result.pharmacy.name,
                     address: result.pharmacy.address,
                     distance: formatDistance(result.distance),
-                    phone: result.pharmacy.phone || "9876543210",
+                    phone: result.pharmacy.contactNumber || "9876543210",
                     rating: result.pharmacy.rating || 0,
                     reviewCount: result.pharmacy.numReviews || 0,
                     isOpen: result.pharmacy.isOpen ?? true,
@@ -223,6 +276,7 @@ const SearchResults = () => {
                         : "out-of-stock",
                     price: result.price,
                     lastUpdated: "Just now",
+                    location: result.pharmacy.location,
                   }}
                 />
               ))

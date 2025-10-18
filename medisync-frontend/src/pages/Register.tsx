@@ -183,9 +183,9 @@ const Register = () => {
                       <div className="space-y-1 leading-none">
                         <FormLabel>
                           I agree to the{" "}
-                          <Link to="/terms" className="text-primary hover:underline">
+                          <span className="text-muted-foreground">
                             Terms & Conditions
-                          </Link>
+                          </span>
                         </FormLabel>
                         <FormMessage />
                       </div>

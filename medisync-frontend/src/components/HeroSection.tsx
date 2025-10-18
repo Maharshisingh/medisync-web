@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,13 +6,44 @@ import { Search, MapPin, Clock, Shield } from "lucide-react";
 
 const HeroSection = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const navigate = useNavigate();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setShowSuggestions(false);
     }
+  };
+
+  const fetchSuggestions = async (query: string) => {
+    if (query.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+    try {
+      const response = await fetch(`/api/users/suggestions?q=${encodeURIComponent(query)}`);
+      const data = await response.json();
+      setSuggestions(data);
+    } catch (error) {
+      setSuggestions([]);
+    }
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchSuggestions(searchQuery);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const handleSuggestionClick = (medicineName: string) => {
+    setSearchQuery(medicineName);
+    setShowSuggestions(false);
+    navigate(`/search?q=${encodeURIComponent(medicineName)}`);
   };
 
   return (
@@ -44,12 +75,29 @@ const HeroSection = () => {
                 <div className="flex-1 relative">
                   <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input
+                    ref={inputRef}
                     type="text"
                     placeholder="Search for medicines (e.g., Paracetamol, Vitamin D, etc.)"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
+                    onFocus={() => setShowSuggestions(true)}
+                    onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                     className="pl-12 pr-4 py-6 text-lg border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent"
                   />
+                  {showSuggestions && suggestions.length > 0 && (
+                    <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-xl shadow-lg z-10 max-h-60 overflow-y-auto">
+                      {suggestions.map((medicine, index) => (
+                        <div
+                          key={index}
+                          className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
+                          onClick={() => handleSuggestionClick(medicine.name)}
+                        >
+                          <div className="font-medium text-gray-900">{medicine.name}</div>
+                          <div className="text-sm text-gray-500">{medicine.manufacturer}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <Button type="submit" size="lg" className="m-2 btn-medical">
                   <Search className="h-5 w-5 mr-2" />
