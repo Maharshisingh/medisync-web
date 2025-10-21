@@ -104,6 +104,11 @@ const Login = () => {
                   <Button type="submit" className="w-full" disabled={isSubmitting}>
                     {isSubmitting ? "Signing in..." : "Sign In"}
                   </Button>
+                  <div className="text-center">
+                    <Link to="/forgot-password" className="text-sm text-primary hover:text-primary-hover">
+                      Forgot Password?
+                    </Link>
+                  </div>
                 </CardContent>
                 <CardFooter className="justify-center">
                   <p className="text-sm text-muted-foreground">Don't have an account?{" "}

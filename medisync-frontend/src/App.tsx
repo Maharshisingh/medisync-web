@@ -11,6 +11,9 @@ import Register from "./pages/Register";
 import PartnerDashboard from "./pages/PartnerDashboard";
 import NotFound from "./pages/NotFound";
 import PharmacyLogin from "./pages/PharmacyLogin";
+import PharmacyRegister from "./pages/PharmacyRegister";
+import ForgotPassword from "./pages/ForgotPassword";
+import PharmacyForgotPassword from "./pages/PharmacyForgotPassword";
 import { AuthProvider } from "./context/AuthContext";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminRoute from "./components/auth/AdminRoute";
@@ -33,6 +36,9 @@ const App = () => (
               <Route path="/register" element={<Register />} />
               <Route path="/partner-dashboard" element={<PartnerDashboard />} />
               <Route path="/partner-login" element={<PharmacyLogin />} />
+              <Route path="/partner-register" element={<PharmacyRegister />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/partner-forgot-password" element={<PharmacyForgotPassword />} />
               <Route path="/admin" element={<AdminDashboard />} /> 
               <Route path="*" element={<NotFound />} />
             </Routes>

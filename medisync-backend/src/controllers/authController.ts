@@ -2,6 +2,7 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import User from '../models/User';
 import Pharmacy from '../models/Pharmacy';
 import { IUser } from '../models/User'; // Import the IUser interface
@@ -81,24 +82,28 @@ export const loginUser = async (req: Request, res: Response) => {
 
 // --- PHARMACY AUTHENTICATION ---
 export const registerPharmacy = async (req: Request, res: Response) => {
-  // ... (This function is already correct) ...
-  const { pharmacyName, email, password, address, contactNumber, coordinates } = req.body;
+  const { pharmacyName, email, password, address, contactNumber, location } = req.body;
   try {
     let pharmacy = await Pharmacy.findOne({ email });
     if (pharmacy) {
       return res.status(400).json({ msg: 'Pharmacy with this email already exists' });
     }
-    pharmacy = new Pharmacy({
-      pharmacyName, email, password, address, contactNumber,
-      location: {
-        type: 'Point',
-        coordinates: [coordinates.lng, coordinates.lat]
-      }
-    });
+    
     const salt = await bcrypt.genSalt(10);
-    pharmacy.password = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    
+    pharmacy = new Pharmacy({
+      pharmacyName, 
+      email, 
+      password: hashedPassword, 
+      address, 
+      contactNumber,
+      location,
+      isApproved: false
+    });
+    
     await pharmacy.save();
-    res.status(201).json({ msg: 'Registration successful. Your account is pending admin approval.' });
+    res.status(201).json({ msg: 'Registration submitted successfully. Please wait for admin approval.' });
   } catch (err) {
     console.error((err as Error).message);
     res.status(500).send('Server error');
@@ -141,6 +146,101 @@ export const loginPharmacy = async (req: Request, res: Response) => {
         res.json({ token, email: pharmacy.email });
       }
     );
+  } catch (err) {
+    console.error((err as Error).message);
+    res.status(500).send('Server error');
+  }
+};
+
+// --- FORGOT PASSWORD ---
+export const forgotPassword = async (req: Request, res: Response) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetTokenExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = resetTokenExpiry;
+    await user.save();
+
+    res.json({ msg: 'Password reset token generated', resetToken });
+  } catch (err) {
+    console.error((err as Error).message);
+    res.status(500).send('Server error');
+  }
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+  const { token, newPassword } = req.body;
+  try {
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return res.status(400).json({ msg: 'Invalid or expired reset token' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    res.json({ msg: 'Password reset successful' });
+  } catch (err) {
+    console.error((err as Error).message);
+    res.status(500).send('Server error');
+  }
+};
+
+export const forgotPasswordPharmacy = async (req: Request, res: Response) => {
+  const { email } = req.body;
+  try {
+    const pharmacy = await Pharmacy.findOne({ email });
+    if (!pharmacy) {
+      return res.status(404).json({ msg: 'Pharmacy not found' });
+    }
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetTokenExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    pharmacy.resetPasswordToken = resetToken;
+    pharmacy.resetPasswordExpires = resetTokenExpiry;
+    await pharmacy.save();
+
+    res.json({ msg: 'Password reset token generated', resetToken });
+  } catch (err) {
+    console.error((err as Error).message);
+    res.status(500).send('Server error');
+  }
+};
+
+export const resetPasswordPharmacy = async (req: Request, res: Response) => {
+  const { token, newPassword } = req.body;
+  try {
+    const pharmacy = await Pharmacy.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() }
+    });
+
+    if (!pharmacy) {
+      return res.status(400).json({ msg: 'Invalid or expired reset token' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    pharmacy.password = await bcrypt.hash(newPassword, salt);
+    pharmacy.resetPasswordToken = undefined;
+    pharmacy.resetPasswordExpires = undefined;
+    await pharmacy.save();
+
+    res.json({ msg: 'Password reset successful' });
   } catch (err) {
     console.error((err as Error).message);
     res.status(500).send('Server error');

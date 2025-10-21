@@ -29,6 +29,17 @@ const approvePharmacy = async (pharmacyId: string) => {
   return response.json();
 };
 
+// API function to reject a pharmacy
+const rejectPharmacy = async (pharmacyId: string) => {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`/api/admin/pharmacies/reject/${pharmacyId}`, {
+    method: 'DELETE',
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  if (!response.ok) throw new Error('Failed to reject pharmacy.');
+  return response.json();
+};
+
 const AdminDashboard = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -44,7 +55,18 @@ const AdminDashboard = () => {
     mutationFn: approvePharmacy,
     onSuccess: () => {
       toast({ title: "Success", description: "Pharmacy has been approved." });
-      // When successful, automatically refresh the list of pending pharmacies
+      queryClient.invalidateQueries({ queryKey: ['pendingPharmacies'] });
+    },
+    onError: (err) => {
+      toast({ title: "Error", description: (err as Error).message, variant: "destructive" });
+    }
+  });
+
+  // Set up the mutation for rejecting a pharmacy
+  const rejectMutation = useMutation({
+    mutationFn: rejectPharmacy,
+    onSuccess: () => {
+      toast({ title: "Success", description: "Pharmacy application rejected." });
       queryClient.invalidateQueries({ queryKey: ['pendingPharmacies'] });
     },
     onError: (err) => {
@@ -71,7 +93,8 @@ const AdminDashboard = () => {
                     <TableHead>Pharmacy Name</TableHead>
                     <TableHead>Email</TableHead>
                     <TableHead>Address</TableHead>
-                    <TableHead>Action</TableHead>
+                    <TableHead>Contact</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -83,14 +106,25 @@ const AdminDashboard = () => {
                       <TableCell>{pharmacy.pharmacyName}</TableCell>
                       <TableCell>{pharmacy.email}</TableCell>
                       <TableCell>{pharmacy.address}</TableCell>
+                      <TableCell>{pharmacy.contactNumber}</TableCell>
                       <TableCell>
-                        <Button
-                          size="sm"
-                          onClick={() => approveMutation.mutate(pharmacy._id)}
-                          disabled={approveMutation.isPending}
-                        >
-                          {approveMutation.isPending ? 'Approving...' : 'Approve'}
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            onClick={() => approveMutation.mutate(pharmacy._id)}
+                            disabled={approveMutation.isPending}
+                          >
+                            {approveMutation.isPending ? 'Approving...' : 'Approve'}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => rejectMutation.mutate(pharmacy._id)}
+                            disabled={rejectMutation.isPending}
+                          >
+                            {rejectMutation.isPending ? 'Rejecting...' : 'Reject'}
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}

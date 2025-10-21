@@ -14,6 +14,8 @@ export interface IPharmacy extends Document {
     isApproved: boolean;
     rating: number;      // <-- New Field
     numReviews: number;  // <-- New Field
+    resetPasswordToken?: string;
+    resetPasswordExpires?: Date;
 }
 
 const PharmacySchema: Schema = new Schema({
@@ -30,6 +32,8 @@ const PharmacySchema: Schema = new Schema({
   // Add these two new fields
   rating: { type: Number, required: true, default: 0 },
   numReviews: { type: Number, required: true, default: 0 },
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date },
 }, { timestamps: true });
 
 PharmacySchema.index({ location: '2dsphere' });

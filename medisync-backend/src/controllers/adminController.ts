@@ -20,7 +20,7 @@ export const approvePharmacy = async (req: Request, res: Response) => {
         const pharmacy = await Pharmacy.findByIdAndUpdate(
             req.params.id,
             { isApproved: true },
-            { new: true } // This option returns the updated document
+            { new: true }
         );
 
         if (!pharmacy) {
@@ -29,6 +29,22 @@ export const approvePharmacy = async (req: Request, res: Response) => {
 
         res.json({ msg: 'Pharmacy approved successfully', pharmacy });
 
+    } catch (error) {
+        const err = error as Error;
+        console.error(err.message);
+        res.status(500).json({ msg: 'Server Error' });
+    }
+};
+
+export const rejectPharmacy = async (req: Request, res: Response) => {
+    try {
+        const pharmacy = await Pharmacy.findByIdAndDelete(req.params.id);
+        
+        if (!pharmacy) {
+            return res.status(404).json({ msg: 'Pharmacy not found' });
+        }
+        
+        res.json({ msg: 'Pharmacy application rejected and removed' });
     } catch (error) {
         const err = error as Error;
         console.error(err.message);

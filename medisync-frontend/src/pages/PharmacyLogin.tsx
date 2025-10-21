@@ -65,10 +65,15 @@ const PharmacyLogin = () => {
                 <div className="space-y-2"><Label htmlFor="password">Password</Label><div className="relative"><Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" /><Input id="password" type={showPassword ? "text" : "password"} placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)} className="pl-9 pr-9" required /><button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">{showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button></div></div>
                 {error && <p className="text-sm text-destructive">{error}</p>}
                 <Button type="submit" className="w-full" variant="trust" disabled={isLoading}>{isLoading ? "Signing in..." : "Sign In"}</Button>
+                <div className="text-center">
+                  <Link to="/partner-forgot-password" className="text-sm text-primary hover:text-primary-hover">
+                    Forgot Password?
+                  </Link>
+                </div>
               </form>
             </CardContent>
             <CardFooter className="justify-center">
-              <p className="text-sm text-muted-foreground">Not a partner yet? <span className="text-muted-foreground">Join Here</span></p>
+              <p className="text-sm text-muted-foreground">Not a partner yet? <Link to="/partner-register" className="text-primary hover:text-primary-hover font-medium">Join Here</Link></p>
             </CardFooter>
           </Card>
         </div>

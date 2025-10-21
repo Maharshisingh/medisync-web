@@ -62,9 +62,9 @@ const Footer = () => {
             <h3 className="font-semibold text-foreground">For Partners</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <span className="text-muted-foreground">
+                <Link to="/partner-register" className="text-muted-foreground hover:text-primary transition-colors">
                   Join as Pharmacy
-                </span>
+                </Link>
               </li>
               <li>
                 <Link to="/partner-login" className="text-muted-foreground hover:text-primary transition-colors">

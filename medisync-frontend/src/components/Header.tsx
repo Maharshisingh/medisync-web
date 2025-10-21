@@ -37,6 +37,11 @@ const Header = () => {
                     <User className="h-4 w-4 mr-2" />
                     My Profile {user?.role === 'admin' && '(Admin)'}
                   </Button>
+                  {user?.role === 'admin' && (
+                    <Button variant="secondary" size="sm" asChild>
+                      <Link to="/admin"><Shield className="h-4 w-4 mr-2" /> Admin Panel</Link>
+                    </Button>
+                  )}
                   <Button variant="outline" size="sm" onClick={logout}>
                     <LogOut className="h-4 w-4 mr-2" /> Logout
                   </Button>
@@ -87,6 +92,11 @@ const Header = () => {
                       <User className="h-4 w-4 mr-2" />
                       My Profile {user?.role === 'admin' && '(Admin)'}
                     </Button>
+                    {user?.role === 'admin' && (
+                      <Button variant="secondary" className="w-full justify-start" asChild>
+                        <Link to="/admin" onClick={() => setIsMenuOpen(false)}><Shield className="h-4 w-4 mr-2" /> Admin Panel</Link>
+                      </Button>
+                    )}
                     <Button variant="outline" className="w-full justify-start" onClick={() => { logout(); setIsMenuOpen(false); }}>
                       <LogOut className="h-4 w-4 mr-2" /> Logout
                     </Button>
