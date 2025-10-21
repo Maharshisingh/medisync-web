@@ -2,6 +2,7 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import path from 'path';
 import connectDB from './config/db';
 
 // Import all of our route files
@@ -20,8 +21,8 @@ const app: Express = express();
 
 // Enable CORS (Cross-Origin Resource Sharing)
 app.use(cors({
-  origin: "http://localhost:8080", // frontend URL
-  credentials: true,              // allow cookies/auth headers if needed
+  origin: process.env.NODE_ENV === 'production' ? process.env.FRONTEND_URL : "http://localhost:8080",
+  credentials: true,
 }));
 
 // This allows our server to accept JSON data in request bodies
@@ -34,10 +35,18 @@ app.use('/api/users', userRoutes);
 app.use('/api/pharmacies', pharmacyRoutes);
 app.use('/api/admin', adminRoutes);
 
-// A simple test route to make sure the server is working
-app.get('/', (req: Request, res: Response) => {
-  res.send('Medisync API is running...');
-});
+// Serve static files from React build
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../../medisync-frontend/dist')));
+  
+  app.get('*', (req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, '../../medisync-frontend/dist/index.html'));
+  });
+} else {
+  app.get('/', (req: Request, res: Response) => {
+    res.send('Medisync API is running...');
+  });
+}
 
 const PORT = process.env.PORT || 5001;
 

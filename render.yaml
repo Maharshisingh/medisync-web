@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: medisync
+    env: node
+    buildCommand: npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        fromDatabase:
+          name: medisync-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        value: https://medisync.onrender.com
+
+databases:
+  - name: medisync-db
+    databaseName: medisync
+    user: medisync

@@ -1,0 +1,21 @@
+{
+  "name": "medisync",
+  "version": "1.0.0",
+  "description": "Medicine finder web application",
+  "main": "server.js",
+  "scripts": {
+    "start": "node medisync-backend/dist/server.js",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd medisync-backend && npm install && npm run build",
+    "build:frontend": "cd medisync-frontend && npm install && npm run build",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd medisync-backend && npm run dev",
+    "dev:frontend": "cd medisync-frontend && npm run dev"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
