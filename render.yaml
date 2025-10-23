@@ -8,15 +8,8 @@ services:
       - key: NODE_ENV
         value: production
       - key: MONGODB_URI
-        fromDatabase:
-          name: medisync-db
-          property: connectionString
+        value: mongodb+srv://trymaharshi_db_user:mongopass1@medisync.ly6ut3x.mongodb.net/?retryWrites=true&w=majority&appName=Medisync
       - key: JWT_SECRET
-        generateValue: true
+        value: a_very_secret_key_that_is_long_and_secure
       - key: FRONTEND_URL
-        value: https://medisync.onrender.com
-
-databases:
-  - name: medisync-db
-    databaseName: medisync
-    user: medisync
+        sync: false

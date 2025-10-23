@@ -10,8 +10,6 @@ node_modules/
 # Build outputs
 dist/
 build/
-*/dist/
-*/build/
 
 # Logs
 *.log
@@ -21,7 +19,6 @@ npm-debug.log*
 pids
 *.pid
 *.seed
-*.pid.lock
 
 # Coverage directory used by tools like istanbul
 coverage/
@@ -29,18 +26,7 @@ coverage/
 # IDE files
 .vscode/
 .idea/
-*.swp
-*.swo
 
 # OS generated files
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
-
-# Temporary files
-*.tmp
-*.temp
