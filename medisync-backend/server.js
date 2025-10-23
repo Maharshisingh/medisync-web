@@ -48,13 +48,16 @@ app.use('/api/admin', adminRoutes);
 // Serve static files from React build
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../medisync-frontend/dist')));
-  
-  app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../medisync-frontend/dist/index.html'));
-  });
 } else {
   app.get('/', (req, res) => {
     res.send('Medisync API is running...');
+  });
+}
+
+// Handle React routing - this must be LAST
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../medisync-frontend/dist/index.html'));
   });
 }
 
