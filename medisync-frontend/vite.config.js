@@ -1,13 +1,11 @@
-// medisync-frontend/vite.config.js
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
+import react from "@vitejs/plugin-react";
 import path from "path";
 
-export default defineConfig(({ mode }) => ({
+export default defineConfig({
   server: {
     host: "::",
     port: 8080,
-    // This tells Vite to forward any request starting with /api to your backend
     proxy: {
       '/api': {
         target: process.env.NODE_ENV === 'production' ? process.env.VITE_API_URL : 'http://localhost:5001',
@@ -22,7 +20,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [react()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": path.resolve(process.cwd(), "./src"),
     },
   },
-}));
+});
