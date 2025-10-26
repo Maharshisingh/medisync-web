@@ -1,23 +1,24 @@
 // src/App.js
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index.js";
-import SearchResults from "./pages/SearchResults.js";
-import Login from "./pages/Login.js";
-import Register from "./pages/Register.js";
-import PartnerDashboard from "./pages/PartnerDashboard.js";
-import NotFound from "./pages/NotFound.js";
-import PharmacyLogin from "./pages/PharmacyLogin.js";
-import PharmacyRegister from "./pages/PharmacyRegister.js";
-import ForgotPassword from "./pages/ForgotPassword.js";
-import PharmacyForgotPassword from "./pages/PharmacyForgotPassword.js";
-import { AuthProvider } from "./context/AuthContext.js";
-import AdminDashboard from "./pages/AdminDashboard.js";
-import AdminRoute from "./components/auth/AdminRoute.js";
-import ErrorBoundary from "./components/ErrorBoundary.js";
+import Index from "./pages/Index.jsx";
+import SearchResults from "./pages/SearchResults.jsx";
+import Login from "./pages/Login.jsx";
+import Register from "./pages/Register.jsx";
+import PartnerDashboard from "./pages/PartnerDashboard.jsx";
+import NotFound from "./pages/NotFound.jsx";
+import PharmacyLogin from "./pages/PharmacyLogin.jsx";
+import PharmacyRegister from "./pages/PharmacyRegister.jsx";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
+import PharmacyForgotPassword from "./pages/PharmacyForgotPassword.jsx";
+import { AuthProvider } from "./context/AuthContext.jsx";
+import AdminDashboard from "./pages/AdminDashboard.jsx";
+import AdminRoute from "./components/auth/AdminRoute.jsx";
+import ErrorBoundary from "./components/ErrorBoundary.jsx";
 
 const queryClient = new QueryClient();
 
