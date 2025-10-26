@@ -8,7 +8,7 @@ export default defineConfig({
     port: 8080,
     proxy: {
       '/api': {
-        target: process.env.NODE_ENV === 'production' ? process.env.VITE_API_URL : 'http://localhost:5001',
+        target: 'http://localhost:5001',
         changeOrigin: true,
       },
     },

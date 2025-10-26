@@ -229,6 +229,36 @@ const updatePharmacyProfile = async (req, res) => {
     }
 };
 
+const searchMedicines = async (req, res) => {
+    try {
+        const { medicine } = req.query;
+        if (!medicine) {
+            return res.status(400).json({ msg: 'Medicine name is required' });
+        }
+        
+        const medicines = await Medicine.find({
+            name: { $regex: medicine, $options: 'i' }
+        });
+        
+        if (medicines.length === 0) {
+            return res.json([]);
+        }
+        
+        const medicineIds = medicines.map(med => med._id);
+        const inventory = await Inventory.find({
+            medicine: { $in: medicineIds },
+            inStock: true
+        })
+        .populate('medicine', 'name manufacturer')
+        .populate('pharmacy', 'pharmacyName contactNumber address');
+        
+        res.json(inventory);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: 'Server Error' });
+    }
+};
+
 module.exports = {
     uploadInventory,
     createPharmacyReview,
@@ -238,5 +268,6 @@ module.exports = {
     getPharmacyProfile,
     updateInventoryItem,
     deleteInventoryItem,
-    updatePharmacyProfile
+    updatePharmacyProfile,
+    searchMedicines
 };

@@ -11,7 +11,8 @@ const {
     getPharmacyProfile,
     updateInventoryItem,
     deleteInventoryItem,
-    updatePharmacyProfile
+    updatePharmacyProfile,
+    searchMedicines
 } = require('../controllers/pharmacyController');
 
 const router = express.Router();
@@ -32,5 +33,6 @@ router.put('/inventory/update/:id', protect, updateInventoryItem);
 router.delete('/inventory/delete/:id', protect, deleteInventoryItem);
 router.get('/profile', protect, getPharmacyProfile);
 router.put('/profile/update', protect, updatePharmacyProfile);
+router.get('/search', searchMedicines);
 
 module.exports = router;
