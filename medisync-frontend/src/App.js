@@ -1,23 +1,23 @@
-// src/App.jsx
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+// src/App.js
+import { Toaster } from "@/components/ui/toaster.js";
+import { Toaster as Sonner } from "@/components/ui/sonner.js";
+import { TooltipProvider } from "@/components/ui/tooltip.js";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import SearchResults from "./pages/SearchResults";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import PartnerDashboard from "./pages/PartnerDashboard";
-import NotFound from "./pages/NotFound";
-import PharmacyLogin from "./pages/PharmacyLogin";
-import PharmacyRegister from "./pages/PharmacyRegister";
-import ForgotPassword from "./pages/ForgotPassword";
-import PharmacyForgotPassword from "./pages/PharmacyForgotPassword";
-import { AuthProvider } from "./context/AuthContext";
-import AdminDashboard from "./pages/AdminDashboard";
-import AdminRoute from "./components/auth/AdminRoute";
-import ErrorBoundary from "./components/ErrorBoundary";
+import Index from "./pages/Index.js";
+import SearchResults from "./pages/SearchResults.js";
+import Login from "./pages/Login.js";
+import Register from "./pages/Register.js";
+import PartnerDashboard from "./pages/PartnerDashboard.js";
+import NotFound from "./pages/NotFound.js";
+import PharmacyLogin from "./pages/PharmacyLogin.js";
+import PharmacyRegister from "./pages/PharmacyRegister.js";
+import ForgotPassword from "./pages/ForgotPassword.js";
+import PharmacyForgotPassword from "./pages/PharmacyForgotPassword.js";
+import { AuthProvider } from "./context/AuthContext.js";
+import AdminDashboard from "./pages/AdminDashboard.js";
+import AdminRoute from "./components/auth/AdminRoute.js";
+import ErrorBoundary from "./components/ErrorBoundary.js";
 
 const queryClient = new QueryClient();
 

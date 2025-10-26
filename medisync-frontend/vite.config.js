@@ -17,7 +17,22 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: false,
   },
-  plugins: [react()],
+  plugins: [
+    react({
+      include: /\.(js|jsx)$/,
+    })
+  ],
+  esbuild: {
+    loader: 'jsx',
+    include: /src.*\.(js)$/,
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      loader: {
+        '.js': 'jsx',
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(process.cwd(), "./src"),
