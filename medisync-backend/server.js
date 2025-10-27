@@ -23,6 +23,7 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:8080",
   "https://medisync-js-zt23.vercel.app",
+  "https://medisync-js.onrender.com",
   process.env.FRONTEND_URL, // optional extra
 ];
 

@@ -15,6 +15,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { apiUrl } from "@/lib/api";
 
 // NEW: Define the validation rules for the login form
 const loginSchema = z.object({
@@ -49,12 +50,12 @@ const Login = () => {
       // First check if backend is reachable
       let healthCheck;
       try {
-        healthCheck = await fetch('/api/health', { method: 'GET' });
+        healthCheck = await fetch(apiUrl('api/health'), { method: 'GET' });
       } catch (networkError) {
         throw new Error('Cannot connect to server. Please check if the backend is running.');
       }
 
-      const response = await fetch('/api/auth/login/user', {
+      const response = await fetch(apiUrl('api/auth/login/user'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),

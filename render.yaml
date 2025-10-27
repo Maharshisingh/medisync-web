@@ -12,4 +12,4 @@ services:
       - key: JWT_SECRET
         value: a_very_secret_key_that_is_long_and_secure
       - key: FRONTEND_URL
-        sync: false
+        value: https://medisync-js.onrender.com
