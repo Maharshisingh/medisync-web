@@ -19,12 +19,27 @@ connectDB();
 
 const app = express();
 
-// Enable CORS (Cross-Origin Resource Sharing)
-app.use(cors({
-  origin: process.env.NODE_ENV === 'production' ? process.env.FRONTEND_URL : "http://localhost:8080",
-  credentials: true,
-}));
 
+const allowedOrigins = [
+  "http://localhost:8080",
+  "https://medisync-js-zt23.vercel.app",
+  process.env.FRONTEND_URL, // in case you have another one set in env
+];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, Postman, etc.)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 // This allows our server to accept JSON data in request bodies
 app.use(express.json());
 
