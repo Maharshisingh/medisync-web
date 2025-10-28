@@ -46,7 +46,7 @@ app.get('/', (req, res) => {
   res.json({ message: 'MediSync API' });
 });
 
-app.use('*', (req, res) => {
+app.all('*', (req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
