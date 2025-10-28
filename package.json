@@ -4,7 +4,7 @@
   "description": "Medicine finder web application",
   "main": "server.js",
   "scripts": {
-    "start": "node medisync-backend/server.js",
+    "start": "node medisync-backend/server-clean.js",
     "build": "cd medisync-backend && npm install",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:backend": "cd medisync-backend && npm run dev",
