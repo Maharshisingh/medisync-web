@@ -18,7 +18,7 @@ app.use(cors({
     const allowedOrigins = [
       "http://localhost:8080",
       "https://medisync-js-zt23.vercel.app",
-      "https://medisync-backend-xyz.onrender.com"
+      "https://medisync-js.onrender.com"
     ];
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
