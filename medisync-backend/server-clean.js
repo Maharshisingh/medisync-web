@@ -14,12 +14,21 @@ connectDB();
 const app = express();
 
 app.use(cors({
-  origin: [
-    "http://localhost:8080",
-    "https://medisync-js-zt23.vercel.app",
-    "https://medisync-js.onrender.com"
-  ],
-  credentials: true
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      "http://localhost:8080",
+      "https://medisync-js-zt23.vercel.app",
+      "https://medisync-js.onrender.com"
+    ];
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json());
