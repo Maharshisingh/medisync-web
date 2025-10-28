@@ -1,11 +1,6 @@
-// API configuration for different environments
-const API_BASE_URL = import.meta.env.VITE_API_URL || 
-  (import.meta.env.PROD ? 'https://medisync-js.onrender.com' : 'http://localhost:5001');
-
-// For Vercel deployment, use the Render backend URL
-const BACKEND_URL = typeof window !== 'undefined' && window.location.hostname.includes('vercel.app') 
-  ? 'https://medisync-js.onrender.com'
-  : API_BASE_URL;
+// Use localhost for development, render for production
+const BACKEND_URL = import.meta.env.VITE_API_URL || 
+  (import.meta.env.DEV ? 'http://localhost:5001' : 'https://medisync-js.onrender.com');
 
 export const apiUrl = (endpoint) => {
   // Remove leading slash if present
@@ -13,4 +8,4 @@ export const apiUrl = (endpoint) => {
   return `${BACKEND_URL}/${cleanEndpoint}`;
 };
 
-export default API_BASE_URL;
+export default BACKEND_URL;
