@@ -23,6 +23,7 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:8080",
   "https://medisync-js-zt23.vercel.app",
+  "https://medisync-js.onrender.com",
   process.env.FRONTEND_URL, // optional extra
 ];
 
@@ -61,21 +62,14 @@ app.use('/api/users', userRoutes);
 app.use('/api/pharmacies', pharmacyRoutes);
 app.use('/api/admin', adminRoutes);
 
-// ----- Serve Frontend (Production Only) -----
-if (process.env.NODE_ENV === 'production') {
-  // Serve static files from the React build
-  app.use(express.static(path.join(__dirname, '../medisync-frontend/dist')));
-
-  // Handle React routing (must come after static middleware)
-  app.get(/.*/, (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../medisync-frontend/dist/index.html'));
+// ----- Root endpoint -----
+app.get('/', (req, res) => {
+  res.json({
+    message: 'MediSync API is running...',
+    frontend: 'https://medisync-js-zt23.vercel.app',
+    docs: '/api/health'
   });
-} else {
-  // Dev mode root endpoint
-  app.get('/', (req, res) => {
-    res.send('MediSync API is running...');
-  });
-}
+});
 
 // ----- 404 Fallback for unknown API routes -----
 app.use((req, res) => {
