@@ -9,6 +9,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Mail, Lock, Shield, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { apiUrl } from "@/lib/api";
 
 const PharmacyLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -25,7 +26,7 @@ const PharmacyLogin = () => {
     setError("");
 
     try {
-      const response = await fetch('/api/auth/login/pharmacy', {
+      const response = await fetch(apiUrl('api/auth/login/pharmacy'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
