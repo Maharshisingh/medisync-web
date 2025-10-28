@@ -1,6 +1,5 @@
 // Use localhost for development, render for production
-const BACKEND_URL = import.meta.env.VITE_API_URL || 
-  (import.meta.env.DEV ? 'http://localhost:5001' : 'https://medisync-js.onrender.com');
+const BACKEND_URL = 'https://medisync-backend-xyz.onrender.com';
 
 export const apiUrl = (endpoint) => {
   // Remove leading slash if present
