@@ -5,9 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node medisync-backend/server.js",
-    "build": "npm run build:backend && npm run build:frontend",
-    "build:backend": "cd medisync-backend && npm install",
-    "build:frontend": "cd medisync-frontend && npm install && npm run build",
+    "build": "cd medisync-backend && npm install",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:backend": "cd medisync-backend && npm run dev",
     "dev:frontend": "cd medisync-frontend && npm run dev"
