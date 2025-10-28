@@ -46,9 +46,7 @@ app.get('/', (req, res) => {
   res.json({ message: 'MediSync API' });
 });
 
-app.all('*', (req, res) => {
-  res.status(404).json({ message: 'Route not found' });
-});
+
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
