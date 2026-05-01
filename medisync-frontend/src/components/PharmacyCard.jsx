@@ -1,10 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Phone, Clock, Star, Navigation } from "lucide-react";
+import { MapPin, Phone, Clock, Star, Navigation, Eye } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const PharmacyCard = ({ pharmacy, medicineName }) => {
+  const navigate = useNavigate();
+  
   const handleCall = () => {
     window.open(`tel:${pharmacy.phone}`, '_self');
+  };
+  
+  const handleViewPharmacy = () => {
+    navigate(`/pharmacy/${pharmacy.id}`);
   };
 
   const handleDirections = () => {
@@ -116,21 +123,31 @@ const PharmacyCard = ({ pharmacy, medicineName }) => {
               variant="default"
               size="sm"
               className="flex-1"
-              disabled={pharmacy.availability === "out-of-stock"}
-              onClick={handleCall}
+              onClick={handleViewPharmacy}
             >
-              <Phone className="h-4 w-4 mr-2" />
-              Call Store
+              <Eye className="h-4 w-4 mr-2" />
+              View Pharmacy
             </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="flex-1"
-              onClick={handleDirections}
-            >
-              <Navigation className="h-4 w-4 mr-2" />
-              Directions
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1"
+                onClick={handleCall}
+              >
+                <Phone className="h-4 w-4 mr-2" />
+                Call
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex-1"
+                onClick={handleDirections}
+              >
+                <Navigation className="h-4 w-4 mr-2" />
+                Directions
+              </Button>
+            </div>
           </div>
         </div>
       </div>

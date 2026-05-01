@@ -40,8 +40,19 @@ const SearchResults = () => {
 
   const medicineName = searchParams.get("q") || "";
 
-  // Default location (Mumbai coordinates)
-  const userLocation = { lat: 19.0760, lng: 72.8777 };
+  // Get user location from settings or default
+  const getUserLocation = () => {
+    const saved = localStorage.getItem("locationSettings");
+    if (saved) {
+      const settings = JSON.parse(saved);
+      if (settings.enabled && settings.latitude && settings.longitude) {
+        return { lat: settings.latitude, lng: settings.longitude };
+      }
+    }
+    return { lat: 19.0760, lng: 72.8777 }; // Default Mumbai
+  };
+  
+  const userLocation = getUserLocation();
 
   // Fetch data with react-query
   const {

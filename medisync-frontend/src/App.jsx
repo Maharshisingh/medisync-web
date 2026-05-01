@@ -19,6 +19,8 @@ import { AuthProvider } from "./context/AuthContext.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import AdminRoute from "./components/auth/AdminRoute.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
+import PharmacyDetail from "./pages/PharmacyDetail.jsx";
+import UserProfile from "./pages/UserProfile.jsx";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +42,8 @@ const App = () => (
               <Route path="/partner-register" element={<PharmacyRegister />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/partner-forgot-password" element={<PharmacyForgotPassword />} />
+              <Route path="/pharmacy/:id" element={<PharmacyDetail />} />
+              <Route path="/profile" element={<UserProfile />} />
               <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} /> 
               <Route path="*" element={<NotFound />} />
             </Routes>

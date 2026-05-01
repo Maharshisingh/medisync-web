@@ -69,8 +69,26 @@ const getUserProfile = async (req, res) => {
         if (!req.user || !req.user.id) {
             return res.status(401).json({ msg: 'Not authorized, not a valid user token.' });
         }
-        const user = await User.findById(req.user.id);
+        const user = await User.findById(req.user.id).select('-password');
         res.json(user);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: 'Server Error' });
+    }
+};
+
+const updateUserProfile = async (req, res) => {
+    try {
+        if (!req.user || !req.user.id) {
+            return res.status(401).json({ msg: 'Not authorized, not a valid user token.' });
+        }
+        const { name, email, phone } = req.body;
+        const updatedUser = await User.findByIdAndUpdate(
+            req.user.id,
+            { name, email, phone },
+            { new: true }
+        ).select('-password');
+        res.json(updatedUser);
     } catch (error) {
         console.error(error);
         res.status(500).json({ msg: 'Server Error' });
@@ -127,6 +145,7 @@ const getMedicineSuggestions = async (req, res) => {
 module.exports = {
     searchMedicine,
     getUserProfile,
+    updateUserProfile,
     uploadPrescription,
     getMedicineSuggestions
 };

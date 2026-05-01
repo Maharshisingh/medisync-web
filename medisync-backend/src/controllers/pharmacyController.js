@@ -259,6 +259,32 @@ const searchMedicines = async (req, res) => {
     }
 };
 
+const getPharmacyById = async (req, res) => {
+    try {
+        const pharmacyId = req.params.id;
+        const pharmacy = await Pharmacy.findById(pharmacyId).select('-password');
+        if (!pharmacy) {
+            return res.status(404).json({ msg: 'Pharmacy not found' });
+        }
+        res.json(pharmacy);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: 'Server Error' });
+    }
+};
+
+const getPharmacyInventory = async (req, res) => {
+    try {
+        const pharmacyId = req.params.id;
+        const inventory = await Inventory.find({ pharmacy: pharmacyId })
+            .populate('medicine', 'name manufacturer');
+        res.json(inventory);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: 'Server Error' });
+    }
+};
+
 module.exports = {
     uploadInventory,
     createPharmacyReview,
@@ -269,5 +295,7 @@ module.exports = {
     updateInventoryItem,
     deleteInventoryItem,
     updatePharmacyProfile,
-    searchMedicines
+    searchMedicines,
+    getPharmacyById,
+    getPharmacyInventory
 };

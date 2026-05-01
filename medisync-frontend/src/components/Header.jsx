@@ -1,13 +1,14 @@
 // src/components/Header.jsx
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Search, Stethoscope, User, Shield, Menu, X, LogOut } from "lucide-react";
 import { useAuth } from "@/context/AuthContext"; // <-- Import our hook
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { token, user, logout } = useAuth(); // <-- Get token, user, and logout function
+  const { token, user, logout } = useAuth();
+  const location = useLocation();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -33,9 +34,11 @@ const Header = () => {
                 </Button>
               ) : (
                 <>
-                  <Button variant="ghost" size="sm" disabled>
-                    <User className="h-4 w-4 mr-2" />
-                    My Profile {user?.role === 'admin' && '(Admin)'}
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link to="/profile">
+                      <User className="h-4 w-4 mr-2" />
+                      My Profile {user?.role === 'admin' && '(Admin)'}
+                    </Link>
                   </Button>
                   {user?.role === 'admin' && (
                     <Button variant="secondary" size="sm" asChild>
@@ -50,13 +53,13 @@ const Header = () => {
             </>
           ) : (
             <>
-              <Button variant="ghost" size="sm" asChild>
+              <Button variant={location.pathname === '/login' ? 'default' : 'ghost'} size="sm" asChild>
                 <Link to="/login"><User className="h-4 w-4 mr-2" /> Login</Link>
               </Button>
-              <Button variant="default" size="sm" asChild>
+              <Button variant={location.pathname === '/register' ? 'default' : 'ghost'} size="sm" asChild>
                 <Link to="/register">Sign Up</Link>
               </Button>
-              <Button variant="outline" size="sm" asChild>
+              <Button variant={location.pathname === '/partner-login' ? 'default' : 'outline'} size="sm" asChild>
                 <Link to="/partner-login"><Shield className="h-4 w-4 mr-2" /> Partner Portal</Link>
               </Button>
             </>
@@ -88,9 +91,11 @@ const Header = () => {
                   </Button>
                 ) : (
                   <>
-                    <Button variant="ghost" className="w-full justify-start" disabled>
-                      <User className="h-4 w-4 mr-2" />
-                      My Profile {user?.role === 'admin' && '(Admin)'}
+                    <Button variant="ghost" className="w-full justify-start" asChild>
+                      <Link to="/profile" onClick={() => setIsMenuOpen(false)}>
+                        <User className="h-4 w-4 mr-2" />
+                        My Profile {user?.role === 'admin' && '(Admin)'}
+                      </Link>
                     </Button>
                     {user?.role === 'admin' && (
                       <Button variant="secondary" className="w-full justify-start" asChild>
@@ -105,13 +110,13 @@ const Header = () => {
               </>
             ) : (
               <>
-                <Button variant="ghost" className="w-full justify-start" asChild>
+                <Button variant={location.pathname === '/login' ? 'default' : 'ghost'} className="w-full justify-start" asChild>
                   <Link to="/login" onClick={() => setIsMenuOpen(false)}><User className="h-4 w-4 mr-2" /> Login</Link>
                 </Button>
-                <Button variant="default" className="w-full justify-start" asChild>
+                <Button variant={location.pathname === '/register' ? 'default' : 'ghost'} className="w-full justify-start" asChild>
                   <Link to="/register" onClick={() => setIsMenuOpen(false)}>Sign Up</Link>
                 </Button>
-                <Button variant="outline" className="w-full justify-start" asChild>
+                <Button variant={location.pathname === '/partner-login' ? 'default' : 'outline'} className="w-full justify-start" asChild>
                   <Link to="/partner-login" onClick={() => setIsMenuOpen(false)}><Shield className="h-4 w-4 mr-2" /> Partner Portal</Link>
                 </Button>
               </>

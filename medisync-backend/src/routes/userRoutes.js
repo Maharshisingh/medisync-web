@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { searchMedicine, getUserProfile, uploadPrescription, getMedicineSuggestions } = require('../controllers/userController');
+const { searchMedicine, getUserProfile, updateUserProfile, uploadPrescription, getMedicineSuggestions } = require('../controllers/userController');
 const { protect } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 
@@ -12,6 +12,7 @@ router.get('/suggestions', getMedicineSuggestions);
 
 // Protected User routes
 router.get('/profile', protect, getUserProfile);
+router.put('/profile', protect, updateUserProfile);
 
 router.post(
     '/prescriptions/upload',
